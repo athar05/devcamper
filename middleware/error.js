@@ -1,8 +1,19 @@
+const ErrorResponse = require("../utils/errorResponse");
+
 const errorHandler = (err, req, res, next) => {
-  console.log("err", err);
+  //doubt
+  let error = { ...err };
+
+  error.message = err.message;
+
+  if (err.name === "CastError") {
+    const message = `Resource not found with the ID: ${err.value}`;
+    error = new ErrorResponse(message, 404);
+  }
+
   res
-    .status(err.statusCode || 500)
-    .json({ success: false, error: err.message || "server error" });
+    .status(error.statusCode || 500)
+    .json({ success: false, error: error.message || "server error" });
 };
 
 module.exports = errorHandler;
